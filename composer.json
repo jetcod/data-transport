@@ -2,16 +2,24 @@
     "name": "jetcod/data-transport",
     "description": "Efficient PHP Data Transport with DTOs",
     "type": "library",
-    "require": {},
+    "require": {
+        "php": "^7.4|^8.0"
+    },
     "require-dev": {
         "phpstan/phpstan": "^1.10",
         "friendsofphp/php-cs-fixer": "^3.14",
-        "phpunit/phpunit": "^9.6"
+        "phpunit/phpunit": "^9.6",
+        "fakerphp/faker": "^1.21"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
             "Jetcod\\DataTransport\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Jetcod\\DataTransport\\Test\\": "tests/"
         }
     },
     "authors": [
