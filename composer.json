@@ -1,0 +1,28 @@
+{
+    "name": "jetcod/data-transport",
+    "description": "Efficient PHP Data Transport with DTOs",
+    "type": "library",
+    "require": {},
+    "require-dev": {
+        "phpstan/phpstan": "^1.10",
+        "friendsofphp/php-cs-fixer": "^3.14",
+        "phpunit/phpunit": "^9.6"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Jetcod\\DataTransport\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Hamid Ghorashi",
+            "email": "h.ghorashi@gmail.com"
+        }
+    ],
+    "scripts": {
+        "phpcs-fix": "php-cs-fixer fix ",
+        "phpstan": "phpstan analyse --memory-limit=-1 src/",
+        "test": "./vendor/bin/phpunit --testdox "
+    }
+}
