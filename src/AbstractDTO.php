@@ -39,10 +39,8 @@ abstract class AbstractDTO implements Arrayable, Jsonable
 
     /**
      * Unset a key.
-     *
-     * @param int|string $key
      */
-    public function __unset($key)
+    public function __unset(string $key)
     {
         unset($this->attributes[$key]);
     }
@@ -59,10 +57,8 @@ abstract class AbstractDTO implements Arrayable, Jsonable
 
     /**
      * Determine if the key has been set.
-     *
-     * @param int|string $key
      */
-    public function has($key): bool
+    public function has(string $key): bool
     {
         return isset($this->attributes[$key]);
     }
