@@ -106,6 +106,20 @@ class DataTransferObjectTest extends TestCase
         $this->assertEquals(false, $dto->has('phone'));
     }
 
+    public function testIssetAttribute()
+    {
+        $expectedValues = [
+            'name'  => $this->faker->name(),
+            'email' => $this->faker->email(),
+        ];
+
+        $dto = $this->makeTestDTO($expectedValues);
+
+        $this->assertEquals(true, isset($dto->name));
+        $this->assertEquals(true, isset($dto->email));
+        $this->assertEquals(false, isset($dto->phone));
+    }
+
     public function testToString()
     {
         $expectedValues = [

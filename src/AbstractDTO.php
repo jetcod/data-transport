@@ -38,6 +38,14 @@ abstract class AbstractDTO implements Arrayable, Jsonable
     }
 
     /**
+     * Determine whether the ke is set.
+     */
+    public function __isset(string $key): bool
+    {
+        return $this->has($key);
+    }
+
+    /**
      * Unset a key.
      */
     public function __unset(string $key)
