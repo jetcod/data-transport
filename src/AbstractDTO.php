@@ -17,7 +17,7 @@ abstract class AbstractDTO implements Arrayable, Jsonable
      */
     private $attributes = [];
 
-    public function __construct(?array $attributes = [])
+    final public function __construct(?array $attributes = [])
     {
         $this->attributes = $attributes;
     }
