@@ -59,6 +59,14 @@ $dto->name = "John Doe";
 $dto->email = 'john.doe@example.com';
 ```
 
+n addition to the traditional method of creating a class, you can also utilize the convenient make function to create instances of the class. The make function simplifies the process and provides an alternative way to initialize objects.
+
+```php
+<?php 
+
+$dto = \App\DTO\Student::make($data);
+```
+
 By utilizing the data transfer object, one can prevent the occurrence of exceptions when attempting to access an undefined class attribute. In such cases, the data transfer object will consistently return `null`.
 
 ```php
