@@ -3,6 +3,7 @@
 namespace Jetcod\DataTransport\Test;
 
 use Jetcod\DataTransport\AbstractDTO;
+use Jetcod\DataTransport\Test\Stubs\DataTransferObject;
 
 /**
  * @internal
@@ -28,6 +29,22 @@ class DataTransferObjectTest extends TestCase
             'email' => $email,
             'phone' => $phone,
         ], $actualValue);
+    }
+
+    public function testMakableObject()
+    {
+        $actualValue = DataTransferObject::make([
+            'name'  => $name  = $this->faker->name(),
+            'email' => $email = $this->faker->email(),
+            'phone' => $phone = $this->faker->phoneNumber,
+        ]);
+
+        $this->assertInstanceOf(AbstractDTO::class, $actualValue);
+        $this->assertEquals([
+            'name'  => $name,
+            'email' => $email,
+            'phone' => $phone,
+        ], $actualValue->toArray());
     }
 
     public function testSetInvalidDataType()

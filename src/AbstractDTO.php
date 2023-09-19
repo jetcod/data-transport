@@ -4,9 +4,12 @@ namespace Jetcod\DataTransport;
 
 use Jetcod\DataTransport\Contracts\Arrayable;
 use Jetcod\DataTransport\Contracts\Jsonable;
+use Jetcod\DataTransport\Traits\Makeable;
 
 abstract class AbstractDTO implements Arrayable, Jsonable
 {
+    use Makeable;
+
     /**
      * An array of object attributes.
      *
