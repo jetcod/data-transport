@@ -100,7 +100,7 @@ class DataTransferObjectTest extends TestCase
         ]);
     }
 
-    public function getNonExistentAttribute()
+    public function testGetNonExistentAttribute()
     {
         $dto       = $this->makeTestDTO();
         $dto->name = $this->faker->name();
