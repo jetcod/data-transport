@@ -20,6 +20,7 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      contents: write
     steps:
     - id: deployment
       uses: sphinx-notes/pages@v3
