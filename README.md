@@ -11,6 +11,8 @@
 
 **Data Transport** is a PHP package that provides a simple and efficient way to transport data within your application. With Data Transport, you can easily define and manage your data structures, ensuring that your application's data is well-organized and easy to work with. Get started today and streamline your data transport process with Data Transport!
 
+Check out our [documentation](https://jetcod.github.io/data-transport) for more details.
+
 ## Installation
 
 To install `jetcod/data-transport`, you can use Composer, the dependency manager for PHP. Run the following command in your terminal:
