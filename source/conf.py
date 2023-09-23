@@ -18,7 +18,7 @@ extensions = []
 templates_path = ['_templates']
 exclude_patterns = []
 
-
+html_copy_source = False
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -26,10 +26,9 @@ exclude_patterns = []
 html_theme = 'sphinx_material'
 html_static_path = ['_static']
 
-# Add CSS files
-html_css_files = [
-    'css/style.css',  # Adjust the path to your CSS file
-]
+html_sidebars = {
+    "**": ["globaltoc.html", "localtoc.html", "searchbox.html"]
+}
 
 # Material theme options (see theme.conf for more information)
 html_theme_options = {
@@ -61,7 +60,7 @@ html_theme_options = {
     # Visible levels of the global TOC; -1 means unlimited
     'globaltoc_depth': 3,
     # If False, expand all TOC entries
-    'globaltoc_collapse': False,
+    'globaltoc_collapse': True,
     # If True, show hidden TOC entries
     'globaltoc_includehidden': False,
 
