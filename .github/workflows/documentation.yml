@@ -7,6 +7,9 @@ on:
 jobs:
   pages:
     runs-on: ubuntu-20.04
+    permissions:
+      pages: write
+      id-token: write
     steps:
     - id: deployment
       uses: sphinx-notes/pages@v3
