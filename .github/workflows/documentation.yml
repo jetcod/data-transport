@@ -12,6 +12,8 @@ jobs:
       uses: sphinx-notes/pages@v3
       with:
         publish: true
+        documentation_path: ./source
+        requirements_path: ./source/requirements.txt
     - uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
