@@ -111,15 +111,16 @@ class DataTransferObjectTest extends TestCase
     public function testHasAttribute()
     {
         $expectedValues = [
-            'name'  => $this->faker->name(),
-            'email' => $this->faker->email(),
+            'email'      => $this->faker->email(),
+            'dob'        => null,
+            'registered' => false,
         ];
 
         $dto = $this->makeTestDTO($expectedValues);
 
-        $this->assertIsBool($dto->has('name'));
-        $this->assertEquals(true, $dto->has('name'));
         $this->assertEquals(true, $dto->has('email'));
+        $this->assertEquals(true, $dto->has('dob'));
+        $this->assertEquals(true, $dto->has('registered'));
         $this->assertEquals(false, $dto->has('phone'));
     }
 

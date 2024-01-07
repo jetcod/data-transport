@@ -71,7 +71,7 @@ abstract class AbstractDTO implements Arrayable, Jsonable
      */
     public function has(string $key): bool
     {
-        return isset($this->attributes[$key]);
+        return array_key_exists($key, $this->attributes);
     }
 
     /**
