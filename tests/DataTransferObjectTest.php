@@ -174,4 +174,23 @@ class DataTransferObjectTest extends TestCase
         $this->assertJson($dto->toJson());
         $this->assertEquals(json_encode($expectedValues), $dto->toJson());
     }
+
+    public function testHookIsCalledOnConstruct()
+    {
+        $expectedValues = [
+            'name'  => $name = $this->faker->name(),
+            'email' => $email = $this->faker->email(),
+            'init'  => false,
+        ];
+        $dto = new class($expectedValues) extends DataTransferObject {
+            public function init()
+            {
+                $this->init = true;
+            }
+        };
+
+        $this->assertTrue($dto->init);
+        $this->assertEquals($name, $dto->name);
+        $this->assertEquals($email, $dto->email);
+    }
 }
