@@ -78,6 +78,20 @@ var_dump($dto->name);   // Returns null
 ```
 Additionally, it offers the opportunity to specify custom data types.
 
+## Initialization Hook
+
+Starting from version 1.1.2, an `init()` method can be defined within any derived class for additional initialization logic. This method, if defined, will be automatically called after the attributes are assigned in the constructor. You can use this method to perform any necessary setup or initialization tasks.
+
+```php
+class Student extends AbstractDTO
+{
+    protected function init()
+    {
+        // Custom initialization logic
+    }
+}
+```
+
 ## Functions
 
 The following functions are available in the DTO class:
