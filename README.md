@@ -3,8 +3,9 @@
 [![Actions Status](https://github.com/jetcod/data-transport/actions/workflows/php.yml/badge.svg?style=for-the-badge&label=%3Cb%3EBuild%3C/b%3E)](https://github.com/jetcod/data-transport/actions)
 
 
-[![Latest Stable Version](http://poser.pugx.org/jetcod/data-transport/v?style=for-the-badge)](https://packagist.org/packages/jetcod/data-transport)
-[![License](http://poser.pugx.org/jetcod/data-transport/license?style=for-the-badge)](https://packagist.org/packages/jetcod/data-transport)
+[![Latest Stable Version](https://img.shields.io/packagist/v/jetcod/data-transport?label=Latest%20Stable%20Version)](https://packagist.org/packages/jetcod/data-transport)
+[![Total Downloads](https://img.shields.io/packagist/dt/jetcod/data-transport?label=Total%20Downloads)](https://packagist.org/packages/jetcod/data-transport)
+[![License](https://img.shields.io/github/license/jetcod/data-transport?label=License)](https://github.com/jetcod/eloquent-repository/blob/main/LICENSE)
 
 
 ## Overview
