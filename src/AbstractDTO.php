@@ -7,7 +7,7 @@ use Jetcod\DataTransport\Contracts\Jsonable;
 use Jetcod\DataTransport\Contracts\SchemaValidatorInterface;
 use Jetcod\DataTransport\Contracts\TypedEntity;
 use Jetcod\DataTransport\Traits\Makeable;
-use Jetcod\DataTransport\Validations\SchemaValidator;
+use Jetcod\DataTransport\Validations\DataValidator;
 
 abstract class AbstractDTO implements Arrayable, Jsonable
 {
@@ -22,9 +22,9 @@ abstract class AbstractDTO implements Arrayable, Jsonable
 
     private $_strict = true;
 
-    final public function __construct(?array $attributes = [], bool $strict = true)
+    final public function __construct(?array $attributes = null, bool $strict = true)
     {
-        $this->attributes = $attributes;
+        $this->attributes = $attributes ?? [];
         $this->_strict    = $strict;
 
         if (method_exists($this, 'init')) {
@@ -127,7 +127,7 @@ abstract class AbstractDTO implements Arrayable, Jsonable
             throw new \RuntimeException(sprintf('The method %s::getSchema() is not defined.', static::class));
         }
 
-        return new SchemaValidator($this->getSchema(), $this->_strict);
+        return new DataValidator($this->getSchema(), $this->_strict);
     }
 
     /**
