@@ -58,7 +58,7 @@ class DataValidator implements SchemaValidatorInterface
 
         try {
             $validator = $this->getResolver()->resolve($this->schema[$attribute]);
-        } catch (\InvalidArgumentException $e) {
+        } catch (\RuntimeException $e) {
             if ($this->strict) {
                 throw $e;
             }
