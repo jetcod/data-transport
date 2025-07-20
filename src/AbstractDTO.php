@@ -4,7 +4,10 @@ namespace Jetcod\DataTransport;
 
 use Jetcod\DataTransport\Contracts\Arrayable;
 use Jetcod\DataTransport\Contracts\Jsonable;
+use Jetcod\DataTransport\Contracts\SchemaValidatorInterface;
+use Jetcod\DataTransport\Contracts\TypedEntity;
 use Jetcod\DataTransport\Traits\Makeable;
+use Jetcod\DataTransport\Validations\SchemaValidator;
 
 abstract class AbstractDTO implements Arrayable, Jsonable
 {
@@ -27,6 +30,8 @@ abstract class AbstractDTO implements Arrayable, Jsonable
         if (method_exists($this, 'init')) {
             $this->init();
         }
+
+        $this->validateAttributes($this->toArray());
     }
 
     /**
@@ -36,6 +41,8 @@ abstract class AbstractDTO implements Arrayable, Jsonable
      */
     public function __set(string $key, $val)
     {
+        $this->validateAttributes([$key => $val]);
+
         $this->attributes[$key] = $val;
     }
 
@@ -109,5 +116,29 @@ abstract class AbstractDTO implements Arrayable, Jsonable
         }
 
         return $json;
+    }
+
+    /**
+     * Creates and returns a schema validator for the current DTO instance.
+     */
+    protected function getValidator(): SchemaValidatorInterface
+    {
+        if (!method_exists($this, 'getSchema')) {
+            throw new \RuntimeException(sprintf('The method %s::getSchema() is not defined.', static::class));
+        }
+
+        return new SchemaValidator($this->getSchema(), $this->_strict);
+    }
+
+    /**
+     * Validate data using the schema validator.
+     */
+    private function validateAttributes(array $attributes): void
+    {
+        if (!$this instanceof TypedEntity) {
+            return;
+        }
+
+        $this->getValidator()->validateAttributes($attributes);
     }
 }
