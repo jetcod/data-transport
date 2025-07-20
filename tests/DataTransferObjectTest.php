@@ -178,7 +178,7 @@ class DataTransferObjectTest extends TestCase
     public function testHookIsCalledOnConstruct()
     {
         $expectedValues = [
-            'name'  => $name = $this->faker->name(),
+            'name'  => $name  = $this->faker->name(),
             'email' => $email = $this->faker->email(),
             'init'  => false,
         ];
