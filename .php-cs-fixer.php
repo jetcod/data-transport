@@ -1,6 +1,11 @@
 <?php
 
 declare(strict_types=1);
+use PhpCsFixer\Config;
+use PhpCsFixer\ConfigurationException\InvalidConfigurationException;
+use PhpCsFixer\Finder;
+use PhpCsFixer\FixerFactory;
+use PhpCsFixer\RuleSet;
 
 /*
  * This file is part of PHP CS Fixer.
@@ -24,7 +29,7 @@ This source file is subject to the MIT license that is bundled
 with this source code in the file LICENSE.
 EOF;
 
-$finder = PhpCsFixer\Finder::create()
+$finder = Finder::create()
     ->ignoreDotFiles(false)
     ->ignoreVCSIgnored(true)
     ->exclude('tests/Fixtures')
@@ -35,7 +40,7 @@ $finder = PhpCsFixer\Finder::create()
     ])
 ;
 
-$config = new PhpCsFixer\Config();
+$config = new Config();
 $config
     ->setRiskyAllowed(true)
     ->setRules([
@@ -67,12 +72,12 @@ $config
 // special handling of fabbot.io service if it's using too old PHP CS Fixer version
 if (false !== getenv('FABBOT_IO')) {
     try {
-        PhpCsFixer\FixerFactory::create()
+        FixerFactory::create()
             ->registerBuiltInFixers()
             ->registerCustomFixers($config->getCustomFixers())
-            ->useRuleSet(new PhpCsFixer\RuleSet($config->getRules()))
+            ->useRuleSet(new RuleSet($config->getRules()))
         ;
-    } catch (PhpCsFixer\ConfigurationException\InvalidConfigurationException $e) {
+    } catch (InvalidConfigurationException $e) {
         $config->setRules([]);
     } catch (UnexpectedValueException $e) {
         $config->setRules([]);
