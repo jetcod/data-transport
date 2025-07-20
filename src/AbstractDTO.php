@@ -17,9 +17,12 @@ abstract class AbstractDTO implements Arrayable, Jsonable
      */
     private $attributes = [];
 
-    final public function __construct(?array $attributes = [])
+    private $_strict = true;
+
+    final public function __construct(?array $attributes = [], bool $strict = true)
     {
         $this->attributes = $attributes;
+        $this->_strict    = $strict;
 
         if (method_exists($this, 'init')) {
             $this->init();
@@ -76,6 +79,14 @@ abstract class AbstractDTO implements Arrayable, Jsonable
     public function has(string $key): bool
     {
         return array_key_exists($key, $this->attributes);
+    }
+
+    /**
+     * Check if the DTO is in strict mode.
+     */
+    public function isStrict(): bool
+    {
+        return $this->strict;
     }
 
     /**
