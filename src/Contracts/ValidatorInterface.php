@@ -15,4 +15,9 @@ interface ValidatorInterface
      * Get the validation error.
      */
     public function getError(): string;
+
+    /**
+     * Get the validation alias.
+     */
+    public function alias(): string;
 }

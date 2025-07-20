@@ -3,17 +3,18 @@
 namespace Jetcod\DataTransport\Validations;
 
 use Jetcod\DataTransport\Contracts\SchemaValidatorInterface;
-use Jetcod\DataTransport\Contracts\ValidatorInterface;
 use Jetcod\DataTransport\Exceptions\ValidationException;
-use Jetcod\DataTransport\Helpers\Str;
+use Jetcod\DataTransport\Validations\Resolver as ValidatorResolver;
 
-class SchemaValidator implements SchemaValidatorInterface
+class DataValidator implements SchemaValidatorInterface
 {
     private bool $strict;
 
     private array $schema;
 
     private array $errors = [];
+
+    private ValidatorResolver $resolver;
 
     public function __construct(array $schema, bool $strict = true)
     {
@@ -22,7 +23,29 @@ class SchemaValidator implements SchemaValidatorInterface
     }
 
     /**
-     * Validate the schema against the context.
+     * Set the validator resolver.
+     */
+    public function setResolver(ValidatorResolver $resolver): self
+    {
+        $this->resolver = $resolver;
+
+        return $this;
+    }
+
+    /**
+     * Get the validator resolver.
+     */
+    public function getResolver(): ValidatorResolver
+    {
+        if (!isset($this->resolver)) {
+            $this->resolver = new ValidatorResolver(__DIR__ . '/Validators', __NAMESPACE__ . '\Validators');
+        }
+
+        return $this->resolver;
+    }
+
+    /**
+     * Validate a single attribute against its corresponding validator.
      *
      * @param string $attribute the key to validate
      * @param mixed  $value     the value to validate
@@ -34,7 +57,7 @@ class SchemaValidator implements SchemaValidatorInterface
         }
 
         try {
-            $validator = $this->initializeValidator($this->schema[$attribute]);
+            $validator = $this->getResolver()->resolve($this->schema[$attribute]);
         } catch (\InvalidArgumentException $e) {
             if ($this->strict) {
                 throw $e;
@@ -51,7 +74,7 @@ class SchemaValidator implements SchemaValidatorInterface
     }
 
     /**
-     * Validate the attributes against the schema.
+     * Validate multiple attributes.
      */
     public function validateAttributes(array $data): void
     {
@@ -77,28 +100,10 @@ class SchemaValidator implements SchemaValidatorInterface
     }
 
     /**
-     * Check if the schema has errors.
+     * Check if any validation errors exist.
      */
     public function hasError(): bool
     {
-        return count($this->errors) > 0;
-    }
-
-    private function initializeValidator(string $type): ValidatorInterface
-    {
-        $validatorClass = $this->getValidatorName($type);
-
-        if (!$validatorClass) {
-            throw new \InvalidArgumentException("Validator for type {$type} not found.");
-        }
-
-        return new $validatorClass();
-    }
-
-    private function getValidatorName(string $type): ?string
-    {
-        $validatorNamespace = __NAMESPACE__ . '\Validators\\' . Str::studly($type) . 'Validator';
-
-        return class_exists($validatorNamespace) ? $validatorNamespace : null;
+        return !empty($this->errors);
     }
 }
