@@ -6,3 +6,6 @@ composer.lock
 
 # Ignore cache files
 *.cache
+
+# Ignore test coverage report
+coverage/
