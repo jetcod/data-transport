@@ -13,7 +13,7 @@ class NumericValidator implements ValidatorInterface
      */
     public function validate($value): bool
     {
-        return is_numeric($value);
+        return !is_string($value) && is_numeric($value);
     }
 
     /**
@@ -21,7 +21,7 @@ class NumericValidator implements ValidatorInterface
      */
     public function getError(): string
     {
-        return 'The value must be of type float.';
+        return 'The value must be a number.';
     }
 
     public function alias(): string
