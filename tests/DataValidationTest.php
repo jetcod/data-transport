@@ -4,24 +4,20 @@ namespace Jetcod\DataTransport\Test;
 
 use Jetcod\DataTransport\Contracts\TypedEntity;
 use Jetcod\DataTransport\Exceptions\ValidationException;
+use Jetcod\DataTransport\Test\Stubs\TypedEntityObject;
 use Jetcod\DataTransport\Test\Stubs\DataTransferObject;
 
 class DataValidationTest extends TestCase
 {
     public function testInvalidStringThrowaValidationException()
     {
-        $dto = new class([]) extends DataTransferObject implements TypedEntity {
-            public function getSchema(): array
-            {
-                return [
-                    'email' => 'string',
-                ];
-            }
-        };
+        $dto = new TypedEntityObject();
+        $dto->setSchema(['email' => 'string']);
 
-        $exception = new ValidationException(['email' => 'The value must be a string.']);
-        $this->expectExceptionObject($exception);
-          
+        $this->expectExceptionObject(new ValidationException([
+            'email' => 'The value must be a string.'
+        ]));
+
         $dto->email = rand(1, 1000);
     }
 
@@ -52,7 +48,7 @@ class DataValidationTest extends TestCase
     public function testIgnoreValidationOfNonTypedEntitiesDataObjects()
     {
         $data = [
-            'id'  => $randName = $this->faker->name(),
+            'id'    => $randName = $this->faker->name(),
             'email' => $randValue = rand(1, 1000),
         ];
 
@@ -60,7 +56,7 @@ class DataValidationTest extends TestCase
             public function getSchema(): array
             {
                 return [
-                    'id'  => 'int',
+                    'id'    => 'int',
                     'email' => 'string',
                 ];
             }
@@ -91,36 +87,18 @@ class DataValidationTest extends TestCase
 
     public function testUndefinedValidatorPassesValidationOnNoneStrictMode()
     {
-        $data = [
-            'address' => 'the address goes here'
-        ];
-
-        $dto = new class($data, false) extends DataTransferObject implements TypedEntity {
-            public function getSchema(): array
-            {
-                return [
-                    'address' => 'custom',
-                ];
-            }
-        };
+        $dto = new TypedEntityObject(['address' => 'the address goes here'], false, [
+            'address' => 'custom',
+        ]);
 
         $this->assertEquals('the address goes here', $dto->address);
     }
 
     public function testIgnoreValidationOnNonExistanceKey()
     {
-        $data = [
-            'email' => 'info@example.com'
-        ];
-
-        $dto = new class($data) extends DataTransferObject implements TypedEntity {
-            public function getSchema(): array
-            {
-                return [
-                    'id' => 'int',
-                ];
-            }
-        };
+        $dto = new TypedEntityObject(['email' => 'info@example.com'], true, [
+            'id' => 'int',
+        ]);
 
         $this->assertEquals('info@example.com', $dto->email);
     }
