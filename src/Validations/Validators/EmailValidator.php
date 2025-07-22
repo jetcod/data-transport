@@ -21,7 +21,7 @@ class EmailValidator implements ValidatorInterface
      */
     public function getError(): string
     {
-        return 'The value must be of type boolean.';
+        return 'The value must be of type email.';
     }
 
     public function alias(): string
