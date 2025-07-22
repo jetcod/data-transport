@@ -26,6 +26,6 @@ class BooleanValidator implements ValidatorInterface
 
     public function alias(): string
     {
-        return 'boolean';
+        return 'bool';
     }
 }
