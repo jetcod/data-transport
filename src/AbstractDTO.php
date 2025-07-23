@@ -45,7 +45,7 @@ abstract class AbstractDTO implements Arrayable, Jsonable
     public function __set(string $key, $val)
     {
         if ($this->isReadOnly()) {
-            throw new \Exception('The object is read only.');
+            throw new \Exception('The object is write protected.');
         }
 
         $this->validateAttributes([$key => $val]);
