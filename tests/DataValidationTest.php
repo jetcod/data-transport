@@ -3,6 +3,7 @@
 namespace Jetcod\DataTransport\Test;
 
 use Jetcod\DataTransport\Contracts\TypedEntity;
+use Jetcod\DataTransport\Contracts\ValidatorInterface;
 use Jetcod\DataTransport\Exceptions\ValidationException;
 use Jetcod\DataTransport\Test\Stubs\CustomValidator;
 use Jetcod\DataTransport\Test\Stubs\TypedEntityObject;
@@ -137,6 +138,34 @@ class DataValidationTest extends TestCase
             {
                 return [
                     'address' => CustomValidator::class,
+                ];
+            }
+        };
+    }
+
+    public function testResolveCustomValidatorObject()
+    {
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('custom validation message');
+        $dto = new class(['address' => 'some text']) extends DataTransferObject implements TypedEntity {
+            public function getSchema(): array
+            {
+                return [
+                    'address' => new CustomValidator,
+                ];
+            }
+        };
+    }
+
+    public function testThrowsExceptionIfValidatorTypeIsNotExpected()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Validator must be a string alias or an instance of %s.', ValidatorInterface::class));
+        $dto = new class(['address' => 'some text']) extends DataTransferObject implements TypedEntity {
+            public function getSchema(): array
+            {
+                return [
+                    'address' => true,
                 ];
             }
         };
