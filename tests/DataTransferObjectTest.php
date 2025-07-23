@@ -199,8 +199,23 @@ class DataTransferObjectTest extends TestCase
         $dto = new DataTransferObject(['id' => 1], true);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('The object is read only.');
+        $this->expectExceptionMessage('The object is write protected.');
 
         $dto->name = 'a name';
+    }
+
+    public function testCreateReadOnlyObjectAfterConstruction()
+    {
+        $dto = $this->makeTestDTO(['id' => 1]);
+
+        $dto->name = 'old name';
+        $this->assertEquals('old name', $dto->name);
+        
+        $dto->readOnly();
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('The object is write protected.');
+
+        $dto->name = 'new name';
     }
 }
