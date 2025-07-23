@@ -30,6 +30,11 @@ class Resolver
             ));
         }
 
+        if (class_exists($alias)) {
+            return $this->instantiateValidatorClass($alias);
+        }
+
+        // Try resolving alias via scanning registered validator classes
         foreach ($this->getValidatorClasses() as $class) {
             if (!class_exists($class)) {
                 continue;
@@ -37,19 +42,37 @@ class Resolver
 
             $reflection = new \ReflectionClass($class);
 
-            if (
-                $reflection->isInstantiable()
-                && $reflection->implementsInterface(ValidatorInterface::class)
-            ) {
-                $instance = $reflection->newInstance();
+            if (!$reflection->isInstantiable() || !$reflection->implementsInterface(ValidatorInterface::class)) {
+                continue;
+            }
 
-                if ($instance->alias() === $alias) {
-                    return $instance;
-                }
+            /** @var ValidatorInterface $instance */
+            $instance = $reflection->newInstance();
+
+            if ($instance->alias() === $alias) {
+                return $instance;
             }
         }
 
         throw new \RuntimeException("No validator found for alias: {$alias}");
+    }
+
+    /**
+     * Safely instantiate a validator class if valid.
+     */
+    protected function instantiateValidatorClass(string $class): ValidatorInterface
+    {
+        $reflection = new \ReflectionClass($class);
+
+        if (!$reflection->isInstantiable()) {
+            throw new \RuntimeException("Validator class {$class} is not instantiable.");
+        }
+
+        if (!$reflection->implementsInterface(ValidatorInterface::class)) {
+            throw new \RuntimeException("Validator class {$class} must implement " . ValidatorInterface::class);
+        }
+
+        return $reflection->newInstance();
     }
 
     /**

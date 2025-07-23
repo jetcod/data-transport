@@ -4,6 +4,7 @@ namespace Jetcod\DataTransport\Test;
 
 use Jetcod\DataTransport\Contracts\TypedEntity;
 use Jetcod\DataTransport\Exceptions\ValidationException;
+use Jetcod\DataTransport\Test\Stubs\CustomValidator;
 use Jetcod\DataTransport\Test\Stubs\TypedEntityObject;
 use Jetcod\DataTransport\Test\Stubs\DataTransferObject;
 
@@ -111,5 +112,33 @@ class DataValidationTest extends TestCase
         $dto->email = 'info@example.com';
 
         $this->assertEquals('info@example.com', $dto->email);
+    }
+
+    public function testThrowsRuntimeExceptionWhenValidatorNotFound()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('No validator found for alias: non_existent_validator');
+        $dto = new class(['address' => 'some text'], false, true) extends DataTransferObject implements TypedEntity {
+            public function getSchema(): array
+            {
+                return [
+                    'address' => 'non_existent_validator',
+                ];
+            }
+        };
+    }
+
+    public function testCustomValidatorValidatesTheData()
+    {
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('custom validation message');
+        $dto = new class(['address' => 'some text']) extends DataTransferObject implements TypedEntity {
+            public function getSchema(): array
+            {
+                return [
+                    'address' => CustomValidator::class,
+                ];
+            }
+        };
     }
 }
