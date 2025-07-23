@@ -10,7 +10,7 @@
 
 ## Overview
 
-**Data Transport** is a PHP package that provides a simple and efficient way to transport data within your application. With Data Transport, you can easily define and manage your data structures, ensuring that your application's data is well-organized and easy to work with. Get started today and streamline your data transport process with Data Transport!
+**Data Transport** is a PHP package that provides a simple and efficient way to transport data within your application. With Data Transport, you can easily define and manage your data structures, ensuring that your application's data is well-organized and easy to work with. It supports read-only objects, validates attributes upon assignment, and allows integration of custom validators through a schema definition.
 
 Check out our [documentation](https://jetcod.github.io/data-transport) for more details.
 
@@ -62,6 +62,8 @@ $dto->name = "John Doe";
 $dto->email = 'john.doe@example.com';
 ```
 
+When assigning attributes dynamically, the values are validated against the defined schema if your DTO implements `TypedEntity`.
+
 In addition to the traditional method of creating a class, you can also utilize the convenient make function to create instances of the class. The make function simplifies the process and provides an alternative way to initialize objects.
 
 ```php
@@ -78,6 +80,57 @@ $dto = new \App\DTO\Student();
 var_dump($dto->name);   // Returns null
 ```
 Additionally, it offers the opportunity to specify custom data types.
+
+## Read-Only DTO
+DTOs can be constructed as read-only using the second argument of the constructor:
+
+```php
+$dto = new Student($data, readOnly: true);
+```
+
+Or later using:
+
+```php
+$dto = new Student($data);
+$dto->readOnly();
+```
+Attempting to assign new values to a read-only object will throw an exception.
+
+## Custom Validator Support
+
+If your DTO class implements `TypedEntity` and defines a `getSchema()` method, attributes will be validated using custom validators defined in your application. Each field in the schema should map to a validator alias or class.
+
+```php
+use Jetcod\DataTransport\Contracts\TypedEntity;
+
+class Student extends AbstractDTO implements TypedEntity
+{
+    protected function getSchema(): array
+    {
+        return [
+            'email' => 'email',
+            'age'   => 'numeric',
+        ];
+    }
+}
+```
+
+## Supported Validator Aliases
+
+Out of the box, the following validator aliases are supported:
+
+| Alias | Description |
+|-------|-------------|
+| int | Validates that the value is an integer |
+| number | Validates that the value is a number |
+| float | Validates that the value is a float |
+| bool | Validates that the value is a boolean |
+| array | Validates that the value is an array |
+| string | Validates that the value is a string |
+| url | Validates that the value is a valid URL |
+| email | Validates that the value is a valid email address |
+
+You can also create your own validators by implementing `Jetcod\DataTransport\Contracts\ValidatorInterface`.
 
 ## Initialization Hook
 
