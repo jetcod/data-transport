@@ -75,7 +75,7 @@ class DataValidationTest extends TestCase
         $exception = new \RuntimeException('No validator found for alias: custom');
         $this->expectExceptionObject($exception);
 
-        new class($data) extends DataTransferObject implements TypedEntity {
+        new class($data, false, true) extends DataTransferObject implements TypedEntity {
             public function getSchema(): array
             {
                 return [
@@ -87,18 +87,28 @@ class DataValidationTest extends TestCase
 
     public function testUndefinedValidatorPassesValidationOnNoneStrictMode()
     {
-        $dto = new TypedEntityObject(['address' => 'the address goes here'], false, [
-            'address' => 'custom',
-        ]);
+        $data = [
+            'address'  => 'the address goes here'
+        ];
+        
+        $dto = new class($data, false, false) extends DataTransferObject implements TypedEntity {
+            public function getSchema(): array
+            {
+                return [
+                    'address' => 'custom',
+                ];
+            }
+        };
 
         $this->assertEquals('the address goes here', $dto->address);
     }
 
-    public function testIgnoreValidationOnNonExistanceKey()
+    public function testIgnoreValidationOnNonExistentValidationKey()
     {
-        $dto = new TypedEntityObject(['email' => 'info@example.com'], true, [
-            'id' => 'int',
-        ]);
+        $dto = new TypedEntityObject([]);
+        $dto->setSchema(['id' => 'int']);
+
+        $dto->email = 'info@example.com';
 
         $this->assertEquals('info@example.com', $dto->email);
     }
