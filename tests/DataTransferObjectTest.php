@@ -193,4 +193,14 @@ class DataTransferObjectTest extends TestCase
         $this->assertEquals($name, $dto->name);
         $this->assertEquals($email, $dto->email);
     }
+
+    public function testReadOnlyObjectThrowsExceptionOnAttributeAssignment()
+    {
+        $dto = new DataTransferObject(['id' => 1], true);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('The object is read only.');
+
+        $dto->name = 'a name';
+    }
 }

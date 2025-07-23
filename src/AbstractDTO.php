@@ -22,10 +22,13 @@ abstract class AbstractDTO implements Arrayable, Jsonable
 
     private $_strict = true;
 
-    final public function __construct(?array $attributes = null, bool $strict = true)
+    private $_readOnly = false;
+
+    final public function __construct(?array $attributes = null, bool $readOnly = false, bool $strict = true)
     {
         $this->attributes = $attributes ?? [];
         $this->_strict    = $strict;
+        $this->_readOnly  = $readOnly;
 
         if (method_exists($this, 'init')) {
             $this->init();
@@ -41,6 +44,10 @@ abstract class AbstractDTO implements Arrayable, Jsonable
      */
     public function __set(string $key, $val)
     {
+        if ($this->isReadOnly()) {
+            throw new \Exception('The object is read only.');
+        }
+
         $this->validateAttributes([$key => $val]);
 
         $this->attributes[$key] = $val;
@@ -81,6 +88,24 @@ abstract class AbstractDTO implements Arrayable, Jsonable
     }
 
     /**
+     * Flag the object as read only.
+     */
+    public function readOnly(): self
+    {
+        $this->_readOnly = true;
+
+        return $this;
+    }
+
+    /**
+     * Check if the object is read only.
+     */
+    public function isReadOnly(): bool
+    {
+        return $this->_readOnly;
+    }
+
+    /**
      * Determine if the key has been set.
      */
     public function has(string $key): bool
@@ -93,7 +118,7 @@ abstract class AbstractDTO implements Arrayable, Jsonable
      */
     public function isStrict(): bool
     {
-        return $this->strict;
+        return $this->_strict;
     }
 
     /**
