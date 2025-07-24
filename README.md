@@ -122,7 +122,7 @@ Out of the box, the following validator aliases are supported:
 | Alias | Description |
 |-------|-------------|
 | int | Validates that the value is an integer |
-| number | Validates that the value is a number |
+| numeric | Validates that the value is a number |
 | float | Validates that the value is a float |
 | bool | Validates that the value is a boolean |
 | array | Validates that the value is an array |
