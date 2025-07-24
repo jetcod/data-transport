@@ -218,4 +218,34 @@ class DataTransferObjectTest extends TestCase
 
         $dto->name = 'new name';
     }
+
+    public function testObjectInitialStateIsNotReadOnlyAndBecomesReadOnly()
+    {
+        $dto = new class([]) extends DataTransferObject {};
+
+        $this->assertFalse($dto->isReadOnly());
+
+        $this->assertTrue($dto->readOnly()->isReadOnly());
+    }
+
+    public function testReadOnlyIsChainable()
+    {
+        $dto = new class([]) extends DataTransferObject {};
+
+        $this->assertTrue($dto->readOnly() instanceof DataTransferObject);
+    }
+
+    public function testGetValidatorThrowsExceptionIfNoSchemaIsFound()
+    {
+        $dto = new class([]) extends DataTransferObject {
+            public function triggerValidator() {
+                $this->getValidator(); // actually invoke the method
+            }
+        };
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(sprintf('The method %s::getSchema() is not defined.', get_class($dto)));
+
+        $dto->triggerValidator();
+    }
 }
