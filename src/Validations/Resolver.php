@@ -17,7 +17,7 @@ class Resolver
         $this->namespace = rtrim($namespace, '\\');
     }
 
-    public function resolve(mixed $alias): ValidatorInterface
+    public function resolve($alias): ValidatorInterface
     {
         if ($alias instanceof ValidatorInterface) {
             return $alias;

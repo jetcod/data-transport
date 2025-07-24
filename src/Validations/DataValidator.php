@@ -48,7 +48,6 @@ class DataValidator implements SchemaValidatorInterface
      * Validate a single attribute against its corresponding validator.
      *
      * @param string $attribute the key to validate
-     * @param mixed  $value     the value to validate
      */
     public function validateAttribute(string $attribute, $value): void
     {

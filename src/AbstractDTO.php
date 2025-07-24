@@ -39,8 +39,6 @@ abstract class AbstractDTO implements Arrayable, Jsonable
 
     /**
      * Set a value.
-     *
-     * @param mixed $val
      */
     public function __set(string $key, $val)
     {

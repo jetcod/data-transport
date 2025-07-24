@@ -8,8 +8,6 @@ class IntValidator implements ValidatorInterface
 {
     /**
      * Validate if the value is a integer.
-     *
-     * @param mixed $value
      */
     public function validate($value): bool
     {

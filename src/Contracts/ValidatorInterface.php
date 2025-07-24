@@ -6,8 +6,6 @@ interface ValidatorInterface
 {
     /**
      * Validate the given value.
-     *
-     * @param mixed $value
      */
     public function validate($value): bool;
 

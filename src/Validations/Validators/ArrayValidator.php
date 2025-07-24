@@ -8,8 +8,6 @@ class ArrayValidator implements ValidatorInterface
 {
     /**
      * Validate if the value is a string.
-     *
-     * @param mixed $value
      */
     public function validate($value): bool
     {
