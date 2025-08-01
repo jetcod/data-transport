@@ -4,6 +4,7 @@ namespace Jetcod\DataTransport\Test;
 
 use Jetcod\DataTransport\AbstractDTO;
 use Jetcod\DataTransport\Test\Stubs\DataTransferObject;
+use Jetcod\DataTransport\Traits\HasValidator;
 
 /**
  * @internal
@@ -238,6 +239,7 @@ class DataTransferObjectTest extends TestCase
     public function testGetValidatorThrowsExceptionIfNoSchemaIsFound()
     {
         $dto = new class([]) extends DataTransferObject {
+            use HasValidator;
             public function triggerValidator() {
                 $this->getValidator(); // actually invoke the method
             }
