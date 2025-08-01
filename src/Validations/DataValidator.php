@@ -88,7 +88,7 @@ class DataValidator implements SchemaValidatorInterface
         }
 
         if (!$resolver->validate($value)) {
-            throw new ValidationException($resolver->getError());
+            throw new ValidationException([$resolver->getError()]);
         }
     }
 
