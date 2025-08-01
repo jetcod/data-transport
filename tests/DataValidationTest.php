@@ -8,10 +8,11 @@ use Jetcod\DataTransport\Exceptions\ValidationException;
 use Jetcod\DataTransport\Test\Stubs\CustomValidator;
 use Jetcod\DataTransport\Test\Stubs\TypedEntityObject;
 use Jetcod\DataTransport\Test\Stubs\DataTransferObject;
+use Jetcod\DataTransport\Traits\HasValidator;
 
 class DataValidationTest extends TestCase
 {
-    public function testInvalidStringThrowaValidationException()
+    public function testInvalidStringThrowsValidationException()
     {
         $dto = new TypedEntityObject();
         $dto->setSchema(['email' => 'string']);
@@ -23,7 +24,7 @@ class DataValidationTest extends TestCase
         $dto->email = rand(1, 1000);
     }
 
-    public function testConstructWithInvalidDataThrowaValidationException()
+    public function testConstructWithInvalidDataThrowsValidationException()
     {
         $data = [
             'id'  => $this->faker->name(),
@@ -36,7 +37,8 @@ class DataValidationTest extends TestCase
         ]);
         $this->expectExceptionObject($exception);
 
-        new class($data) extends DataTransferObject implements TypedEntity {
+        $dto = new class($data, false, true) extends DataTransferObject implements TypedEntity {
+            use HasValidator;
             public function getSchema(): array
             {
                 return [
@@ -78,6 +80,7 @@ class DataValidationTest extends TestCase
         $this->expectExceptionObject($exception);
 
         new class($data, false, true) extends DataTransferObject implements TypedEntity {
+            use HasValidator;
             public function getSchema(): array
             {
                 return [
@@ -94,6 +97,7 @@ class DataValidationTest extends TestCase
         ];
         
         $dto = new class($data, false, false) extends DataTransferObject implements TypedEntity {
+            use HasValidator;
             public function getSchema(): array
             {
                 return [
@@ -120,6 +124,7 @@ class DataValidationTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('No validator found for alias: non_existent_validator');
         $dto = new class(['address' => 'some text'], false, true) extends DataTransferObject implements TypedEntity {
+            use HasValidator;
             public function getSchema(): array
             {
                 return [
@@ -133,7 +138,8 @@ class DataValidationTest extends TestCase
     {
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('custom validation message');
-        $dto = new class(['address' => 'some text']) extends DataTransferObject implements TypedEntity {
+        $dto = new class(['address' => 'some text'], false, true) extends DataTransferObject implements TypedEntity {
+            use HasValidator;
             public function getSchema(): array
             {
                 return [
@@ -147,7 +153,8 @@ class DataValidationTest extends TestCase
     {
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('custom validation message');
-        $dto = new class(['address' => 'some text']) extends DataTransferObject implements TypedEntity {
+        $dto = new class(['address' => 'some text'], false, true) extends DataTransferObject implements TypedEntity {
+            use HasValidator;
             public function getSchema(): array
             {
                 return [
@@ -161,7 +168,8 @@ class DataValidationTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(sprintf('Validator must be a string alias or an instance of %s.', ValidatorInterface::class));
-        $dto = new class(['address' => 'some text']) extends DataTransferObject implements TypedEntity {
+        $dto = new class(['address' => 'some text'], false, true) extends DataTransferObject implements TypedEntity {
+            use HasValidator;
             public function getSchema(): array
             {
                 return [
@@ -169,5 +177,46 @@ class DataValidationTest extends TestCase
                 ];
             }
         };
+    }
+
+    public function testValidationSucceedsInNonStrictMode()
+    {
+        $data = [
+            'id' => $this->faker->randomNumber(),
+            'email' => $this->faker->email()
+        ];
+
+        $dto = new TypedEntityObject($data, false, false);
+        $dto->setSchema([
+            'id' => 'numeric',
+            'email' => 'email'
+        ]);
+
+        $result = $dto->validate();
+
+        $this->assertTrue($result->isValid());
+        $this->assertEquals([], $result->errors());
+    }
+
+    public function testValidationFailsInNonStrictMode()
+    {
+        $data = [
+            'id' => $this->faker->name(),
+            'email' => $this->faker->randomNumber()
+        ];
+
+        $dto = new TypedEntityObject($data, false, false);
+        $dto->setSchema([
+            'id' => 'numeric',
+            'email' => 'email'
+        ]);
+
+        $result = $dto->validate();
+
+        $this->assertFalse($result->isValid());
+        $this->assertEquals([
+            'id' => 'The value must be a number.',
+            'email' => 'The value must be of type email.'
+        ], $result->errors());
     }
 }

@@ -9,12 +9,12 @@ interface SchemaValidatorInterface
      *
      * @param string $attribute the key to validate
      */
-    public function validateAttribute(string $attribute, $value): void;
+    public function validateAttribute(string $attribute, $value);
 
     /**
-     * Validate the schema against the context.
+     * Validate data object.
      *
-     * @param array $data the data to validate
+     * @param Arrayable $obj the object to be validated
      */
-    public function validateAttributes(array $data): void;
+    public function validate(Arrayable $obj): ValidationResultInterface;
 }

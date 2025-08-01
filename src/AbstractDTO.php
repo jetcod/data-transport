@@ -4,10 +4,9 @@ namespace Jetcod\DataTransport;
 
 use Jetcod\DataTransport\Contracts\Arrayable;
 use Jetcod\DataTransport\Contracts\Jsonable;
-use Jetcod\DataTransport\Contracts\SchemaValidatorInterface;
 use Jetcod\DataTransport\Contracts\TypedEntity;
+use Jetcod\DataTransport\Exceptions\ValidationException;
 use Jetcod\DataTransport\Traits\Makeable;
-use Jetcod\DataTransport\Validations\DataValidator;
 
 abstract class AbstractDTO implements Arrayable, Jsonable
 {
@@ -24,7 +23,7 @@ abstract class AbstractDTO implements Arrayable, Jsonable
 
     private $_readOnly = false;
 
-    final public function __construct(?array $attributes = null, bool $readOnly = false, bool $strict = true)
+    final public function __construct(?array $attributes = null, bool $readOnly = false, bool $strict = false)
     {
         $this->attributes = $attributes ?? [];
         $this->_strict    = $strict;
@@ -34,7 +33,12 @@ abstract class AbstractDTO implements Arrayable, Jsonable
             $this->init();
         }
 
-        $this->validateAttributes($this->toArray());
+        if ($this instanceof TypedEntity && $this->isStrict()) {
+            $result = $this->validate();
+            if (!$result->isValid()) {
+                throw new ValidationException($result->errors());
+            }
+        }
     }
 
     /**
@@ -46,7 +50,9 @@ abstract class AbstractDTO implements Arrayable, Jsonable
             throw new \Exception('The object is write protected.');
         }
 
-        $this->validateAttributes([$key => $val]);
+        if ($this instanceof TypedEntity && $this->isStrict()) {
+            $this->validateAttribute($key, $val);
+        }
 
         $this->attributes[$key] = $val;
     }
@@ -139,29 +145,5 @@ abstract class AbstractDTO implements Arrayable, Jsonable
         }
 
         return $json;
-    }
-
-    /**
-     * Creates and returns a schema validator for the current DTO instance.
-     */
-    protected function getValidator(): SchemaValidatorInterface
-    {
-        if (!method_exists($this, 'getSchema')) {
-            throw new \RuntimeException(sprintf('The method %s::getSchema() is not defined.', static::class));
-        }
-
-        return new DataValidator($this->getSchema(), $this->_strict);
-    }
-
-    /**
-     * Validate data using the schema validator.
-     */
-    private function validateAttributes(array $attributes): void
-    {
-        if (!$this instanceof TypedEntity) {
-            return;
-        }
-
-        $this->getValidator()->validateAttributes($attributes);
     }
 }

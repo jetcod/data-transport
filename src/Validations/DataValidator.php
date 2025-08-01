@@ -2,7 +2,9 @@
 
 namespace Jetcod\DataTransport\Validations;
 
+use Jetcod\DataTransport\Contracts\Arrayable;
 use Jetcod\DataTransport\Contracts\SchemaValidatorInterface;
+use Jetcod\DataTransport\Contracts\ValidationResultInterface;
 use Jetcod\DataTransport\Exceptions\ValidationException;
 use Jetcod\DataTransport\Validations\Resolver as ValidatorResolver;
 
@@ -12,14 +14,15 @@ class DataValidator implements SchemaValidatorInterface
 
     private array $schema;
 
-    private array $errors = [];
+    private Result $result;
 
     private ValidatorResolver $resolver;
 
-    public function __construct(array $schema, bool $strict = true)
+    public function __construct(array $schema, bool $strict)
     {
         $this->schema = $schema;
         $this->strict = $strict;
+        $this->result = new Result();
     }
 
     /**
@@ -45,18 +48,37 @@ class DataValidator implements SchemaValidatorInterface
     }
 
     /**
+     * Validate multiple attributes.
+     */
+    public function validate(Arrayable $obj): ValidationResultInterface
+    {
+        $data   = $obj->toArray();
+        $result = $this->getValidationResult();
+
+        foreach ($data as $attribute => $value) {
+            try {
+                $this->validateAttribute($attribute, $value);
+            } catch (ValidationException $e) {
+                $result->addError($attribute, $e->getMessage());
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Validate a single attribute against its corresponding validator.
      *
      * @param string $attribute the key to validate
      */
-    public function validateAttribute(string $attribute, $value): void
+    public function validateAttribute(string $attribute, $value)
     {
         if (!array_key_exists($attribute, $this->schema)) {
             return;
         }
 
         try {
-            $validator = $this->getResolver()->resolve($this->schema[$attribute]);
+            $resolver = $this->getResolver()->resolve($this->schema[$attribute]);
         } catch (\RuntimeException $e) {
             if ($this->strict) {
                 throw $e;
@@ -65,44 +87,13 @@ class DataValidator implements SchemaValidatorInterface
             return;
         }
 
-        if (!$validator->validate($value)) {
-            $this->errors[$attribute] = $validator->getError();
-
-            throw new ValidationException($this->errors);
+        if (!$resolver->validate($value)) {
+            throw new ValidationException($resolver->getError());
         }
     }
 
-    /**
-     * Validate multiple attributes.
-     */
-    public function validateAttributes(array $data): void
+    private function getValidationResult(): ValidationResultInterface
     {
-        foreach ($data as $attribute => $value) {
-            try {
-                $this->validateAttribute($attribute, $value);
-            } catch (ValidationException $e) {
-                $this->errors[$attribute] = $e->getMessage();
-            }
-        }
-
-        if ($this->hasError()) {
-            throw new ValidationException($this->errors);
-        }
-    }
-
-    /**
-     * Get the validation errors.
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    /**
-     * Check if any validation errors exist.
-     */
-    public function hasError(): bool
-    {
-        return !empty($this->errors);
+        return $this->result;
     }
 }
