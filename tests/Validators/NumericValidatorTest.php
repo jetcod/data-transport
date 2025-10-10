@@ -28,15 +28,13 @@ class NumericValidatorTest extends TestCase
         $this->assertSame(99.99, $dto->price);
     }
 
-    public function testNumericValidationRejectsStringNumber()
+    public function testNumericValidationAcceptsStringNumber()
     {
         $dto = new TypedEntityObject();
         $dto->setSchema(['price' => 'numeric']);
-
-        $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('The value must be a number.');
-
         $dto->price = '123.45';
+
+        $this->assertSame('123.45', $dto->price);
     }
 
     public function testNumericValidationRejectsNonNumericString()

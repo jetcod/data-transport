@@ -11,7 +11,7 @@ class NumericValidator implements ValidatorInterface
      */
     public function validate($value): bool
     {
-        return !is_string($value) && is_numeric($value);
+        return is_numeric($value);
     }
 
     /**
